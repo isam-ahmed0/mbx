@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=America/New_York
 
 # Lightweight wallpaper
-COPY your_wallpaper.jpg /usr/share/backgrounds/custom_wallpaper.jpg
+COPY Pl6QHc.webp /usr/share/backgrounds/custom_wallpaper.jpg
 
 # Install essentials: Brave, VS Code, lightweight UI themes, and tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
