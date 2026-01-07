@@ -1,0 +1,54 @@
+#!/bin/bash
+
+IMAGE_NAME="minimal-brave-xubuntu"
+CONTAINER_NAME="minimal-brave-desktop"
+VNC_PORT=6901
+XVNC_PORT=5901
+
+usage() {
+  echo "Usage: mbx {start|stop|status|restart}"
+  exit 1
+}
+
+start() {
+  # Check if container is already running
+  if docker ps --filter "name=${CONTAINER_NAME}" --format '{{.Names}}' | grep -w "$CONTAINER_NAME" > /dev/null; then
+    echo "Container $CONTAINER_NAME is already running."
+  else
+    echo "Starting container $CONTAINER_NAME..."
+    docker run -d --name "$CONTAINER_NAME" --platform=linux/amd64 -p ${VNC_PORT}:6901 -p ${XVNC_PORT}:5901 --restart unless-stopped "$IMAGE_NAME"
+    echo "Minimal Brave Xubuntu desktop is running at http://localhost:${VNC_PORT}"
+  fi
+}
+
+stop() {
+  if docker ps --filter "name=${CONTAINER_NAME}" --format '{{.Names}}' | grep -w "$CONTAINER_NAME" > /dev/null; then
+    echo "Stopping container $CONTAINER_NAME..."
+    docker stop "$CONTAINER_NAME"
+    docker rm "$CONTAINER_NAME"
+    echo "Container stopped and removed."
+  else
+    echo "Container $CONTAINER_NAME is not running."
+  fi
+}
+
+status() {
+  if docker ps --filter "name=${CONTAINER_NAME}" --format '{{.Names}}' | grep -w "$CONTAINER_NAME" > /dev/null; then
+    echo "Container $CONTAINER_NAME is running."
+  else
+    echo "Container $CONTAINER_NAME is NOT running."
+  fi
+}
+
+restart() {
+  stop
+  start
+}
+
+case "$1" in
+  start) start ;;
+  stop) stop ;;
+  status) status ;;
+  restart) restart ;;
+  *) usage ;;
+esac
