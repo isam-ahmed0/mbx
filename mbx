@@ -1,58 +1,34 @@
 #!/bin/bash
 
-IMAGE_NAME="ghcr.io/isam-ahmed0/mbx:minimal-brave-xubuntu"
-CONTAINER_NAME="minimal-brave-desktop"
-VNC_PORT=6901
-XVNC_PORT=5901
+IMAGE="ghcr.io/isam-ahmed0/mbx:minimal-brave-xubuntu"
+CONTAINER="minimal-brave-desktop"
+WEB_PORT=6901
+VNC_PORT=5901
 
-usage() {
-  echo "Usage: mbx {start|stop|status|restart}"
+# Check Docker
+if ! command -v docker >/dev/null 2>&1; then
+  echo "Docker is not installed."
   exit 1
-}
+fi
 
-start() {
-  if docker ps --filter "name=${CONTAINER_NAME}" --format '{{.Names}}' | grep -w "$CONTAINER_NAME" > /dev/null; then
-    echo "Container $CONTAINER_NAME is already running."
-  else
-    echo "Pulling latest image $IMAGE_NAME..."
-    docker pull "$IMAGE_NAME"
+# Check if container already exists
+if docker ps -a --format '{{.Names}}' | grep -w "$CONTAINER" >/dev/null; then
+  echo "MBX is already running permanently in the background."
+  exit 0
+fi
 
-    echo "Starting container $CONTAINER_NAME..."
-    docker run -d --name "$CONTAINER_NAME" --platform=linux/amd64 \
-      -p ${VNC_PORT}:6901 -p ${XVNC_PORT}:5901 --restart unless-stopped "$IMAGE_NAME"
+echo "Pulling image..."
+docker pull "$IMAGE"
 
-    echo "Minimal Brave Xubuntu desktop is running at http://localhost:${VNC_PORT}"
-  fi
-}
+echo "Starting MBX (permanent background mode)..."
+docker run -d \
+  --name minimal-brave-desktop \
+  --platform=linux/amd64 \
+  -p 6901:6901 \
+  -p 5901:5901 \
+  -v mbx-home:/home/ubuntu \
+  --restart unless-stopped \
+  ghcr.io/isam-ahmed0/mbx:minimal-brave-xubuntu
 
-stop() {
-  if docker ps --filter "name=${CONTAINER_NAME}" --format '{{.Names}}' | grep -w "$CONTAINER_NAME" > /dev/null; then
-    echo "Stopping container $CONTAINER_NAME..."
-    docker stop "$CONTAINER_NAME"
-    docker rm "$CONTAINER_NAME"
-    echo "Container stopped and removed."
-  else
-    echo "Container $CONTAINER_NAME is not running."
-  fi
-}
-
-status() {
-  if docker ps --filter "name=${CONTAINER_NAME}" --format '{{.Names}}' | grep -w "$CONTAINER_NAME" > /dev/null; then
-    echo "Container $CONTAINER_NAME is running."
-  else
-    echo "Container $CONTAINER_NAME is NOT running."
-  fi
-}
-
-restart() {
-  stop
-  start
-}
-
-case "$1" in
-  start) start ;;
-  stop) stop ;;
-  status) status ;;
-  restart) restart ;;
-  *) usage ;;
-esac
+echo "MBX is live."
+echo "Web: http://localhost:${WEB_PORT}"
