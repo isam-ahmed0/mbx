@@ -3,7 +3,7 @@ Version: 1.0.0
 Section: utils
 Priority: optional
 Architecture: amd64
-Maintainer: Boss <boss@example.com>
+Maintainer: Isam Ahmed <isamahmed782@gmail.com>
 Description: Minimal Brave Xubuntu Docker Desktop CLI
  A simple CLI tool to start/stop your minimal-brave-xubuntu Docker desktop container.
 Depends: docker.io (>= 20.10)
