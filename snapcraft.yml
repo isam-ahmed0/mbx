@@ -1,0 +1,26 @@
+name: minimal-brave-xubuntu-cli
+version: '1.0.0'
+summary: Control minimal Brave Xubuntu desktop Docker container
+description: |
+  Simple CLI tool to start, stop, and manage your minimal Brave Xubuntu Docker desktop container.
+
+confinement: classic
+base: core20
+
+apps:
+  mbx:
+    command: mbx
+    plugs: [docker-support]
+
+parts:
+  mbx:
+    plugin: dump
+    source: .
+    stage-packages:
+      - docker.io
+    organize:
+      mbx: bin/mbx
+
+plugs:
+  docker-support:
+    interface: docker
