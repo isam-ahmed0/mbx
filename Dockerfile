@@ -47,7 +47,7 @@ RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
 ###############################################################################
 # Wallpaper (optional)
 ###############################################################################
-COPY your_wallpaper.jpg /usr/share/backgrounds/custom.jpg
+COPY Pl6QHc.webp /usr/share/backgrounds/custom.jpg
 
 RUN xfconf-query -c xfce4-desktop \
     -p /backdrop/screen0/monitor0/image-path \
